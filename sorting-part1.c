@@ -7,6 +7,8 @@ void bubbleSort(int arr[], int size);
 void combSort(int arr[], int size);
 void insertionSort(int arr[], int size);
 void shellSort(int arr[], int size);
+void heapSort(int arr[], int size);
+void heapify(int arr[], int size, int root);
 
 void swap(int* x, int* y);
 void printArray(int arr[], int size);
@@ -36,6 +38,11 @@ int main() {
     printf("\nShell Sort:\n");
     shellSort(shellArr, MAX);
     printArray(shellArr, MAX);
+    
+    int heapArr[MAX] = {2, 6, 9, 10, 3, 31, 1, 16, 21, 49, 28, 30, 9, 5, 11, 2, 32, 24, 27, 6, 4};
+    printf("\nHeap Sort:\n");
+    heapSort(heapArr, MAX);
+    printArray(heapArr, MAX);
 }
 
 void selectionSort(int arr[], int size) {
@@ -100,6 +107,32 @@ void shellSort(int arr[], int size) {
             }
             arr[y] = key;
         }
+    }
+}
+
+void heapSort(int arr[], int size) {
+    for (int x = size / 2 - 1; x >= 0; x--) {
+        heapify(arr, size, x);
+    }
+    for (int x = size - 1; x >= 0; x--) {
+        swap(&arr[x], &arr[0]);
+        heapify(arr, x, 0);
+    }
+}
+
+void heapify(int arr[], int size, int root) {
+    int left = 2 * root + 1;
+    int right = 2 * root + 2;
+    int largest = root;
+    if (left < size && arr[left] > arr[largest]) {
+        largest = left;
+    }
+    if (right < size && arr[right] > arr[largest]) {
+        largest = right;
+    }
+    if (largest != root) {
+        swap(&arr[largest], &arr[root]);
+        heapify(arr, size, largest);
     }
 }
 
