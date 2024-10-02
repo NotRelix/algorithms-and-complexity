@@ -6,6 +6,7 @@ void selectionSort(int arr[], int size);
 void bubbleSort(int arr[], int size);
 void combSort(int arr[], int size);
 void insertionSort(int arr[], int size);
+void shellSort(int arr[], int size);
 
 void swap(int* x, int* y);
 void printArray(int arr[], int size);
@@ -30,6 +31,11 @@ int main() {
     printf("\nInsertion Sort:\n");
     insertionSort(insertionArr, MAX);
     printArray(insertionArr, MAX);
+
+    int shellArr[MAX] = {2, 6, 9, 10, 3, 31, 1, 16, 21, 49, 28, 30, 9, 5, 11, 2, 32, 24, 27, 6, 4};
+    printf("\nShell Sort:\n");
+    shellSort(shellArr, MAX);
+    printArray(shellArr, MAX);
 }
 
 void selectionSort(int arr[], int size) {
@@ -81,6 +87,19 @@ void insertionSort(int arr[], int size) {
             y--;
         }
         arr[y + 1] = key;
+    }
+}
+
+void shellSort(int arr[], int size) {
+    int x, y, gap;
+    for (gap = size / 2; gap > 0; gap /= 2) {
+        for (x = gap; x < size; x++) {
+            int key = arr[x];
+            for (y = x; y >= gap && arr[y] < arr[y - gap]; y -= gap) {
+                arr[y] = arr[y - gap];
+            }
+            arr[y] = key;
+        }
     }
 }
 
