@@ -13,6 +13,9 @@ int partitionLomuto(int arr[], int left, int right);
 void mergeSort(int arr[], int left, int right);
 void merge(int arr[], int left, int mid, int right);
 
+// Counting Sort
+void countingSort(int arr[], int size);
+
 void printArray(int arr[], int size);
 void swap(int* x, int* y);
 
@@ -31,6 +34,11 @@ int main() {
     printf("\nMerge Sort:\n");
     mergeSort(mergeArr, 0, MAX - 1);
     printArray(mergeArr, MAX);
+
+    int countingArr[MAX] = {2, 6, 9, 10, 3, 31, 1, 16, 21, 49, 28, 30, 9, 5, 11, 2, 32, 24, 27, 6, 4};
+    printf("\nCounting Sort:\n");
+    countingSort(countingArr, MAX);
+    printArray(countingArr, MAX);
 }
 
 void quicksortHoare(int arr[], int left, int right) {
@@ -123,6 +131,32 @@ void merge(int arr[], int left, int mid, int right) {
         j++;
         k++;
     }
+}
+
+void countingSort(int arr[], int size) {
+    int max = 0;
+    for (int i = 0; i < size; i++) {
+        if (arr[i] > max) {
+            max = arr[i];
+        }
+    }
+    int* countArr = (int*)calloc(max + 1, sizeof(int));
+    for (int i = 0; i < size; i++) {
+        countArr[arr[i]]++;
+    }
+    for (int i = 1; i <= max; i++) {
+        countArr[i] += countArr[i - 1];
+    }
+    int* outputArr = (int*)malloc(size * sizeof(int));
+    for (int i = size - 1; i >= 0; i--) {
+        outputArr[countArr[arr[i]] - 1] = arr[i];
+        countArr[arr[i]]--;
+    }
+    for (int i = 0; i < size; i++) {
+        arr[i] = outputArr[i];
+    }
+    free(outputArr);
+    free(countArr);
 }
 
 void printArray(int arr[], int size) {
