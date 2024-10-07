@@ -3,6 +3,16 @@
 
 #define MAX 21
 
+typedef struct {
+    int elem[MAX];
+    int count;
+} ARRAY;
+
+typedef struct Node {
+    int data;
+    struct Node *link;
+} *LL;
+
 // Quicksort
 void quicksortHoare(int arr[], int left, int right);
 int partitionHoare(int arr[], int left, int right);
@@ -24,17 +34,17 @@ void radixSort(int arr[], int size);
 void radixCount(int arr[], int size, int exp);
 
 // Strand Sort
-typedef struct {
-    int elem[MAX];
-    int count;
-} ARRAY;
-
 void strandSort(ARRAY *arr, ARRAY *out);
 void extractStrand(ARRAY *input, ARRAY *sublist);
 void mergeStrand(ARRAY* output, ARRAY *sublist);
 
 // Bucket Sort
+void bucketSort(ARRAY *arr);
+int removeFirst(LL *lp);
+void insertSorted(LL *lp, int data);
+void initializeBucket(LL *lp);
 
+// Helper Functions
 void printArray(int arr[], int size);
 void swap(int* x, int* y);
 
@@ -74,6 +84,11 @@ int main() {
     printf("\nStrand Sort:\n");
     strandSort(&strand, &strandOut);
     printArray(strandOut.elem, MAX);
+
+    ARRAY bucket = {{2, 6, 9, 10, 3, 31, 1, 16, 21, 49, 28, 30, 9, 5, 11, 2, 32, 24, 27, 6, 4}, MAX};
+    printf("\nBucket Sort:\n");
+    bucketSort(&bucket);
+    printArray(bucket.elem, MAX);
 }
 
 void quicksortHoare(int arr[], int left, int right) {
@@ -280,6 +295,70 @@ void mergeStrand(ARRAY* output, ARRAY *sublist) {
     }
     output->count += sublist->count;
     free(mergedArr);
+}
+
+void initializeBucket(LL *lp) {
+    *lp = NULL;
+}
+
+void insertSorted(LL *lp, int data) {
+    LL temp = malloc(sizeof(struct Node));
+    if (temp != NULL) {
+        temp->data = data;
+        temp->link = NULL;
+        if (*lp == NULL || (*lp)->data > data) {
+            temp->link = *lp;
+            *lp = temp;
+        } else {
+            LL trav = *lp;
+            while (trav->link != NULL && trav->link->data <= data) {
+                trav = trav->link;
+            }
+            temp->link = trav->link;
+            trav->link = temp;
+        }
+    }
+}
+
+int removeFirst(LL *lp) {
+    if (*lp == NULL) {
+        return -1;
+    }
+    LL temp = *lp;
+    *lp = temp->link;
+    int data = temp->data;
+    free(temp);
+    return data;
+}
+
+void bucketSort(ARRAY *arr) {
+    int i, j, min, max;
+    min = arr->elem[0];
+    max = arr->elem[0];
+    for (i = 0; i < arr->count; i++) {
+        if (arr->elem[i] < min) {
+            min = arr->elem[i];
+        }
+        if (arr->elem[i] > max) {
+            max = arr->elem[i];
+        }
+    }
+    int range = max - min + 1;
+    int bucketNum = (range < arr->count) ? arr->count : range;
+    LL *buckets = (LL *)malloc(bucketNum * sizeof(LL));
+    for (i = 0; i < bucketNum; i++) {
+        initializeBucket(&buckets[i]);
+    }
+    for (i = 0; i < arr->count; i++) {
+        int bucket = (arr->elem[i] - min) * bucketNum / range;
+        insertSorted(&buckets[bucket], arr->elem[i]);
+    }
+    for (i = 0, j = 0; i < bucketNum; i++) {
+        while (buckets[i] != NULL) {
+            arr->elem[j++] = removeFirst(&buckets[i]);
+        }
+    }
+    free(buckets);
 }
 
 void printArray(int arr[], int size) {
