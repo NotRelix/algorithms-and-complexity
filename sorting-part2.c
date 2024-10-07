@@ -23,9 +23,17 @@ void gnomeSort(int arr[], int size);
 void radixSort(int arr[], int size);
 void radixCount(int arr[], int size, int exp);
 
-// Bucket Sort
-
 // Strand Sort
+typedef struct {
+    int elem[MAX];
+    int count;
+} ARRAY;
+
+void strandSort(ARRAY *arr, ARRAY *out);
+void extractStrand(ARRAY *input, ARRAY *sublist);
+void mergeStrand(ARRAY* output, ARRAY *sublist);
+
+// Bucket Sort
 
 void printArray(int arr[], int size);
 void swap(int* x, int* y);
@@ -60,6 +68,12 @@ int main() {
     printf("\nRadix Sort:\n");
     radixSort(radixArr, MAX);
     printArray(radixArr, MAX);
+
+    ARRAY strand = {{2, 6, 9, 10, 3, 31, 1, 16, 21, 49, 28, 30, 9, 5, 11, 2, 32, 24, 27, 6, 4}, MAX};
+    ARRAY strandOut = {.count = 0};
+    printf("\nStrand Sort:\n");
+    strandSort(&strand, &strandOut);
+    printArray(strandOut.elem, MAX);
 }
 
 void quicksortHoare(int arr[], int left, int right) {
@@ -220,6 +234,52 @@ void radixCount(int arr[], int size, int exp) {
     for (int i = 0; i < size; i++) {
         arr[i] = output[i];
     }
+}
+
+void strandSort(ARRAY *arr, ARRAY *out) {
+    if (arr->count <= 0) {
+        return;
+    }
+
+    ARRAY sublist = {.count = 0};
+    extractStrand(arr, &sublist);
+    strandSort(arr, out);
+    mergeStrand(out, &sublist);
+}
+
+void extractStrand(ARRAY *input, ARRAY *sublist) {
+    int i, j;
+    sublist->elem[sublist->count++] = input->elem[0];
+    for (i = 1, j = 0; i < input->count; i++) {
+        if (input->elem[i] >= sublist->elem[sublist->count - 1]) {
+            sublist->elem[sublist->count++] = input->elem[i];
+        } else {
+            input->elem[j++] = input->elem[i];
+        }
+    }
+    input->count = j;
+}
+void mergeStrand(ARRAY* output, ARRAY *sublist) {
+    int *mergedArr = (int *)calloc(output->count + sublist->count, sizeof(int));
+    int i, j, k;
+    for (i = 0, j = 0, k = 0; i < output->count && j < sublist->count; k++) {
+        if (output->elem[i] <= sublist->elem[j]) {
+            mergedArr[k] = output->elem[i++];
+        } else {
+            mergedArr[k] = sublist->elem[j++];
+        }
+    }
+    for (; i < output->count; k++) {
+        mergedArr[k] = output->elem[i++];
+    }
+    for (; j < sublist->count; k++) {
+        mergedArr[k] = sublist->elem[j++];
+    }
+    for (k = 0; k < output->count + sublist->count; k++) {
+        output->elem[k] = mergedArr[k];
+    }
+    output->count += sublist->count;
+    free(mergedArr);
 }
 
 void printArray(int arr[], int size) {
