@@ -19,6 +19,14 @@ void countingSort(int arr[], int size);
 // Gnome Sort
 void gnomeSort(int arr[], int size);
 
+// Radix Sort
+void radixSort(int arr[], int size);
+void radixCount(int arr[], int size, int exp);
+
+// Bucket Sort
+
+// Strand Sort
+
 void printArray(int arr[], int size);
 void swap(int* x, int* y);
 
@@ -47,6 +55,11 @@ int main() {
     printf("\nGnome Sort:\n");
     countingSort(gnomeArr, MAX);
     printArray(gnomeArr, MAX);
+
+    int radixArr[MAX] = {2, 6, 9, 10, 3, 31, 1, 16, 21, 49, 28, 30, 9, 5, 11, 2, 32, 24, 27, 6, 4};
+    printf("\nRadix Sort:\n");
+    radixSort(radixArr, MAX);
+    printArray(radixArr, MAX);
 }
 
 void quicksortHoare(int arr[], int left, int right) {
@@ -176,6 +189,36 @@ void gnomeSort(int arr[], int size) {
         } else {
             x++;
         }
+    }
+}
+
+void radixSort(int arr[], int size) {
+    int max = arr[0];
+    for (int i = 1; i < size; i++) {
+        if (arr[i] > max) {
+            max = arr[i];
+        }
+    }
+    for (int exp = 1; max / exp > 0; exp *= 10) {
+        radixCount(arr, size, exp);
+    }
+}
+
+void radixCount(int arr[], int size, int exp) {
+    int output[size];
+    int count[10] = {0};
+    for (int i = 0; i < size; i++) {
+        count[arr[i] / exp % 10]++;
+    }
+    for (int i = 1; i < 10; i++) {
+        count[i] += count[i - 1];
+    }
+    for (int i = size - 1; i >= 0; i--) {
+        output[count[arr[i] / exp % 10] - 1] = arr[i];
+        count[arr[i] / exp % 10]--;
+    }
+    for (int i = 0; i < size; i++) {
+        arr[i] = output[i];
     }
 }
 
