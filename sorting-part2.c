@@ -16,6 +16,9 @@ void merge(int arr[], int left, int mid, int right);
 // Counting Sort
 void countingSort(int arr[], int size);
 
+// Gnome Sort
+void gnomeSort(int arr[], int size);
+
 void printArray(int arr[], int size);
 void swap(int* x, int* y);
 
@@ -39,6 +42,11 @@ int main() {
     printf("\nCounting Sort:\n");
     countingSort(countingArr, MAX);
     printArray(countingArr, MAX);
+
+    int gnomeArr[MAX] = {2, 6, 9, 10, 3, 31, 1, 16, 21, 49, 28, 30, 9, 5, 11, 2, 32, 24, 27, 6, 4};
+    printf("\nGnome Sort:\n");
+    countingSort(gnomeArr, MAX);
+    printArray(gnomeArr, MAX);
 }
 
 void quicksortHoare(int arr[], int left, int right) {
@@ -157,6 +165,18 @@ void countingSort(int arr[], int size) {
     }
     free(outputArr);
     free(countArr);
+}   
+
+void gnomeSort(int arr[], int size) {
+    int x = 1;
+    while (x < size) {
+        if (x > 0 && arr[x] < arr[x - 1]) {
+            swap(&arr[x], &arr[x - 1]);
+            x--;
+        } else {
+            x++;
+        }
+    }
 }
 
 void printArray(int arr[], int size) {
